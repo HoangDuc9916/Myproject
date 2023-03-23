@@ -1,41 +1,45 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
-import { Modal, Skeleton } from "antd";
+import { Modal, Switch } from "antd";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    regexEmail
+} from "../../../config/validation";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { setLoading, updateUser } from '../../../redux/UserSlice/listUserSlice';
+import axiosInstance from "../../../config/customAxios";
+import { getUserByIdAPI } from "../../../config/baseAPI";
+import InputText from "../../ui/input/index";
 import { Radio } from "antd";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Box from "@mui/material/Box";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { updateUser } from "../../../redux/UserSlice/listUserSlice";
-import {
-    regexEmail,
-} from "../../../config/validation";
-import { getUserByIdAPI } from "../../../config/baseAPI";
-import axiosInstance from "../../../config/customAxios";
-import InputText from "../../ui/loading/Loading";
 
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
-const UpdateUserModal = ({ modalUpdateOpen, setModalUpdateOpen }) => {
+const ModalUpdateUser = ({ modalUpdateOpen, setModalUpdateOpen }) => {
+
+    const userId = useSelector(state => state.modal.userId);
+    const loading = useSelector((state) => state.choosenUser.loading);
     const dispatch = useDispatch();
-    const userId = useSelector((state) => state.modal.userId);
-    const [loading, setloading] = useState();
+
+    const [users, setUsers] = useState();
     const [value, setValue] = useState(null);
     const [gender, setGender] = useState("male");
     const [status, setStatus] = useState(true);
 
 
-    const [oldData, setOldData] = useState();
-
     const validationSchema = yup.object({
         name: yup.string("Nhập họ tên").required("Họ tên là bắt buộc."),
-
         email: yup
             .string("Nhập email")
             .matches(regexEmail, "Email không đúng với định dạng.")
             .required("Trường email là bắt buộc."),
-
     });
+
 
     const formik = useFormik({
         initialValues: {},
@@ -50,47 +54,45 @@ const UpdateUserModal = ({ modalUpdateOpen, setModalUpdateOpen }) => {
 
     const fetchUser = async (userId) => {
         try {
-            setloading(true);
+            setLoading(true);
             const res = await axiosInstance.get(getUserByIdAPI + userId);
-            setloading(false);
             formik.setValues(res.data);
-            setOldData(res.data);
+            setUsers(res.data);
             setGender(res.data.gender);
             setStatus(res.data.status);
+            setLoading(false);
         } catch (error) {
-            setloading(false);
             console.log(error);
         }
-    };
+    }
 
     useEffect(() => {
-        if (userId > 0) fetchUser(userId);
-    }, [userId]);
-
+        if (userId) {
+            fetchUser(userId);
+        }
+    }, [userId])
 
 
     const handleCancel = () => {
-
-        formik.values.name = oldData.name;
-        formik.values.email = oldData.email;
-
-        setStatus(oldData.status);
-        setModalUpdateOpen(false);
-    };
+        setModalUpdateOpen(false)
+        setValue(null);
+        setGender(null);
+        setStatus(null);
+        formik.resetForm();
+    }
 
     return (
         <>
-            {loading }
+            {loading}
             <Modal
-                title="User Info Update"
+                title="Update User"
                 open={modalUpdateOpen}
                 onOk={formik.handleSubmit}
                 onCancel={handleCancel}
             >
-
                 <InputText
-                    id="name"
                     required
+                    id="name"
                     label="Name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
@@ -99,9 +101,10 @@ const UpdateUserModal = ({ modalUpdateOpen, setModalUpdateOpen }) => {
                         touched: formik.touched.name,
                     }}
                 />
+
                 <InputText
-                    id="email"
                     required
+                    id="email"
                     label="Email"
                     value={formik.values.email}
                     onChange={formik.handleChange}
@@ -110,37 +113,38 @@ const UpdateUserModal = ({ modalUpdateOpen, setModalUpdateOpen }) => {
                         touched: formik.touched.email,
                     }}
                 />
-
-
-                <Box className="flex gap-3 mb-2">
-                    <span className="mr-3  font-bold">Gender:</span>
-                    <Radio.Group
-                        style={{ marginRight: "30%" }}
-                        onChange={(e) => setGender(e.target.value)}
-                        value={gender}
-
-                        className="items-center"
-                    >
-                        <FormControlLabel style={{ paddingLeft: '20px', paddingRight: '20px' }} value={"Male"} control={<Radio checked />} label="Male" />
-                        <FormControlLabel value={"Female"} control={<Radio />} label="Female" />
-                    </Radio.Group>
+                <Box sx={{ minWidth: 120, marginTop: 4 }}>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Gender</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="gender"
+                            value={gender}
+                            label="Gender"
+                            onChange={(e) => setGender(e.target.value)}
+                        >
+                            <MenuItem value={'Male'} >Male</MenuItem>
+                            <MenuItem value={'Female'}>Female</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Box>
 
-
-
-
-                <Box className="flex gap-3 mb-2">
-                    <span className="mr-3  font-bold" style={{ paddingRight: '1rem' }}>Status:</span>
-                    <Radio.Group
-                        style={{ marginRight: "30%", padding: '0 1rem' }}
-                        onChange={(e) => setStatus(e.target.value)}
-                        value={status}
-                        className="items-center"
-                    >
-                        <FormControlLabel style={{ paddingRight: '5px' }} value={"Active"} control={<Radio />} label="Active" />
-                        <FormControlLabel value={"Inactive"} control={<Radio />} label="Inactive" />
-                    </Radio.Group>
-
+                <Box sx={{ minWidth: 120, marginTop: 4 }}>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="status"
+                            value={status}
+                            label="Status"
+                            defaultChecked={status}
+                            defaultValue={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                        >
+                            <MenuItem value={'Active'} >Active</MenuItem>
+                            <MenuItem value={'Inactive'}>Inactive</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Box>
 
             </Modal>
@@ -148,4 +152,4 @@ const UpdateUserModal = ({ modalUpdateOpen, setModalUpdateOpen }) => {
     );
 };
 
-export default UpdateUserModal;
+export default ModalUpdateUser;

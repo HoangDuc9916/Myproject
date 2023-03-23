@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, TextField, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 const InputText = ({
@@ -26,7 +26,7 @@ const InputText = ({
           <Box className="flex gap-3 items-center">
             <TextField
               className="bg-white rounded-md"
-              multiline
+              multiline = {false}
               fullWidth
               id={id}
               value={value}

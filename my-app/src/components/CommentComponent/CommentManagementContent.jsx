@@ -89,7 +89,9 @@ const CommentManagementContent = () => {
             </Button>
             <Table size="small" style={{ marginTop: "15px" }} aria-label="a dense table">
                 <TableHead>
-                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
+                    <TableRow 
+                    // sx={{ '&:last-child td, &:last-child th': { border: 0 } }} 
+                    >
                         <TableCell>PostId</TableCell>
                         <TableCell>Name</TableCell>
                         <TableCell>Email</TableCell>
@@ -100,7 +102,9 @@ const CommentManagementContent = () => {
                 </TableHead>
                 <TableBody>
                     {listComment.map((item, index) =>
-                        <TableRow key={item.id} component="th" scope="row">
+                        <TableRow key={item.id}
+                        //  component="th"
+                         scope="row">
 
                             <TableCell >{item.post_id}</TableCell>
                             <TableCell style={{color: '#0000cc', fontWeight: 'bold'}}>{item.name}</TableCell>

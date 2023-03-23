@@ -55,7 +55,7 @@ const listUserSlice = createSlice({
         state.pageNumber = action.payload.pageNumber;
         state.totalPage = action.payload.totalPages;
         state.isUpdateUser = false;
-        // state.isDeleteUser = false;
+        state.isDeleteUser = false;
         state.isAddUser = false;
         state.message = action.payload.message;
       })
@@ -65,12 +65,12 @@ const listUserSlice = createSlice({
       .addCase(updateUser.fulfilled, (state, action) => {
         state.isUpdateUser = true;
       })
-      // .addCase(deleteUser.pending, (state, action) => {
-      //     state.statusDeleteUser = true
-      // })
-      // .addCase(deleteUser.fulfilled, (state, action) => {
-      //     state.isDeleteUser = true
-      // })
+      .addCase(deleteUser.pending, (state, action) => {
+          state.statusDeleteUser = true
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+          state.isDeleteUser = true
+      })
       .addCase(addUser.pending, (state, action) => {
         state.statusAddUser = true;
       })

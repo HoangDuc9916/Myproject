@@ -16,8 +16,10 @@ import { fetchAllUser } from '../../redux/UserSlice/listUserSlice';
 import UpdateUserModal from '../../components/ModalComponent/UserModal/UpdateUserModal';
 import ModalDeleteUser from '../../components/ModalComponent/UserModal/DeleteUserModal';
 import ModalAddUser from '../../components/ModalComponent/UserModal/AddUserModal';
+import DetailUserModal from '../../components/ModalComponent/UserModal/DetailUserModal';
 import ManIcon from '@mui/icons-material/Man';
 import WomanIcon from '@mui/icons-material/Woman';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const UserManagementContent = () => {
 
@@ -35,6 +37,7 @@ const UserManagementContent = () => {
     const [modalUpdateOpen, setModalUpdateOpen] = useState(false);
     const [modalDeleteOpen, setModalDeleteOpen] = useState(false);
     const [modalAddOpen, setModalAddOpen] = useState(false);
+    const [modalDetailOpen, setModalDetailOpen] = useState(false);
 
 
 
@@ -69,18 +72,23 @@ const UserManagementContent = () => {
             </Button>
             <Table size="small" style={{ marginTop: "15px" }} aria-label="a dense table">
                 <TableHead>
-                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableRow
+                    //  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                     >
                         <TableCell>Name</TableCell>
                         <TableCell>Email</TableCell>
                         <TableCell>Gender</TableCell>
                         <TableCell>Status</TableCell>
                         <TableCell></TableCell>
                         <TableCell></TableCell>
+                        <TableCell></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {listUser.map((item, index) =>
-                        <TableRow key={item.id} component="th" scope="row">
+                        <TableRow key={item.id} 
+                        // component="th"
+                        scope="row">
 
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{item.email}</TableCell>
@@ -108,6 +116,17 @@ const UserManagementContent = () => {
                                         dispatch(setUserId(item.id));
                                     }}>
                                     <DeleteIcon style={{ color: '#4da6ff' }} />
+                                </IconButton>
+                            </TableCell>
+                            <TableCell>
+                                <IconButton
+                                    aria-label="detail"
+                                    onClick={() => {
+                                        setModalDetailOpen(true);
+                                        dispatch(setUserId(item.id));
+                                    }}
+                                >
+                                    <VisibilityIcon style={{ color: '#ff3377' }} />
                                 </IconButton>
                             </TableCell>
                         </TableRow>
@@ -139,6 +158,13 @@ const UserManagementContent = () => {
                 <ModalAddUser
                     modalAddOpen={modalAddOpen}
                     setModalAddOpen={setModalAddOpen}
+                />
+            </div>
+
+            <div>
+                <DetailUserModal
+                    modalDetailOpen={modalDetailOpen}
+                    setModalDetailOpen={setModalDetailOpen}
                 />
             </div>
         </>

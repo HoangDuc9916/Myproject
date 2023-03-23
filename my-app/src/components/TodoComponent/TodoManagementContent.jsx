@@ -11,7 +11,7 @@ import { useDispatch, useSelector, } from 'react-redux';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-
+import dayjs from "dayjs";
 import { fetchUserById } from '../../redux/UserSlice/listUserSlice'
 
 
@@ -89,7 +89,9 @@ const TodoManagementContent = () => {
             </Button>
             <Table size="small" style={{ marginTop: "15px" }} aria-label="a dense table">
                 <TableHead>
-                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
+                    <TableRow
+                    //  sx={{ '&:last-child td, &:last-child th': { border: 0 } }} 
+                     >
                         <TableCell>UserId</TableCell>
                         <TableCell>Title</TableCell>
                         <TableCell>Due On</TableCell>
@@ -100,11 +102,13 @@ const TodoManagementContent = () => {
                 </TableHead>
                 <TableBody>
                     {listTodo.map((item, index) =>
-                        <TableRow key={item.id} component="th" scope="row">
+                        <TableRow key={item.id}
+                        //  component="th" 
+                         scope="row">
 
                             <TableCell >{item.user_id}</TableCell>
                             <TableCell >{item.title}</TableCell>
-                            <TableCell>{item.due_on}</TableCell>
+                            <TableCell>{dayjs(item.due_on).format("DD/MM/YYYY")}</TableCell>
                             <TableCell >
                                 {item.status === 'completed' ? (<span style={{ color: '#33ff33' }}>{item.status}</span>) : (<span style={{ color: '#ffd633' }}>{item.status}</span>)
                                 }
